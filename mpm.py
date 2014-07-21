@@ -204,8 +204,12 @@ xtmzB+ONnVsP/YCCPeoPijUpLhfFjeCjBdLdGGmBzeo1t3ALYtbEdSTL5Wp2RcFtwX/MjpOKPNek\
 /evmc7BbrQmiut3wTgjJZec+X3AFHw1VILNBMt/eAQtZel0=\
 ")))
 
-def _(s):
-    return t.find(s)
+def _(s): return t.find(s)
+
+def errmsgbox(msg):
+    app=wx.App(0)
+    wx.MessageBox(msg,_('Error!'),wx.OK|wx.ICON_ERROR)
+    exit()
 
 class empty(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -287,23 +291,11 @@ def load_hosts():
             l=l.strip()
             if len(l) and l[0]!='#': hosts.append(l.strip())
         f.close()
-    except:
-        app=wx.App(0)
-        wx.MessageBox(_('Unable to read file')+" '%s'" % fn,\
-            _('Error!'),wx.OK|wx.ICON_ERROR)
-        exit()
-    if not len(hosts):
-        app=wx.App(0)
-        wx.MessageBox(_('List of hosts is empty!'),_('Error!'),\
-            wx.OK|wx.ICON_ERROR)
-        exit()
+    except: errmsgbox(_('Unable to read file')+" '%s'" % fn)
+    if not len(hosts): errmsgbox(_('List of hosts is empty!'))
     for h in hosts:
         if any((c in ';,/\\ ?*|\n\r\t\f\'\"\v') for c in h):
-            app=wx.App(0)
-            wx.MessageBox(_('Unacceptable character in string')+\
-                ": '%s'" % h,_('Error!'),\
-                wx.OK|wx.ICON_ERROR)
-            exit()
+            errmsgbox(_('Unacceptable character in string')+": '%s'" % h)
     return hosts
 
 class _lockfile():
