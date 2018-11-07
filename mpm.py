@@ -157,8 +157,6 @@ class pingmsg(wx.Dialog):
     def __set_properties(self):
         self.SetTitle("")
         self.SetSize((372,114))
-        self.SetBackgroundColour(\
-            wx.SystemSettings_GetColour(wx.SYS_COLOUR_WINDOW))
 
     def __do_layout(self):
         frame_sizer=wx.BoxSizer(wx.VERTICAL)
@@ -183,11 +181,15 @@ class translator():
     def __init__(self):
         self.voc={}
         self.locale=locale.getdefaultlocale()
-
     def find(self,key):
-        if self.voc.has_key(key):
-            if self.voc[key].has_key(self.locale[0]):
-                return self.voc[key][self.locale[0]].encode(self.locale[1])
+        try: wxu=True if (wx.VERSION[0]>3 or osflag) else False
+        except: wxu=False
+        if key in self.voc:
+            if self.locale[0] in self.voc[key]:
+                if wxu: return self.voc[key][self.locale[0]]
+                else:
+                    return self.voc[key][self.locale[0]].encode(\
+                        self.locale[1])
         return key
 
 t=translator()
